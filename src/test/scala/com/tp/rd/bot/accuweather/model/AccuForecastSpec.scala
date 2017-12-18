@@ -8,22 +8,22 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.{FlatSpec, Matchers}
 
 class AccuForecastSpec extends FlatSpec with Matchers {
-//  behavior of "iconPhaseToWeatherBoost"
-//
-//  it should "have the correct expected response" in {
-//    val phases = Table(
-//      ("iconPhase", "weatherBoost"),
-//      ("Cloudy", WeatherBoostValue.Cloudy),
-//      ("Showers", WeatherBoostValue.Rain),
-//      ("Mostly cloudy", WeatherBoostValue.Cloudy),
-//      ("Intermittent clouds", WeatherBoostValue.`Partly Cloudy`),
-//      ("Partly sunny", WeatherBoostValue.Clear),
-//      ("Fog", WeatherBoostValue.Fog)
-//    )
-//    forAll(phases) { (iconPhase: String, weatherBoost: WeatherBoostValue) =>
-//      AccuForecast.iconPhaseToWeatherBoost(iconPhase) should be(weatherBoost)
-//    }
-//  }
+  behavior of "iconPhaseToWeatherBoost"
+
+  it should "have the correct expected response" in {
+    val phases = Table(
+      ("iconPhase", "weatherBoost"),
+      ("Cloudy", WeatherBoostValue.Cloudy),
+      ("Showers", WeatherBoostValue.Rain),
+      ("Mostly cloudy", WeatherBoostValue.Cloudy),
+      ("Intermittent clouds", WeatherBoostValue.`Partly Cloudy`),
+      ("Partly sunny", WeatherBoostValue.Clear),
+      ("Fog", WeatherBoostValue.Fog)
+    )
+    forAll(phases) { (iconPhase: String, weatherBoost: WeatherBoostValue) =>
+      AccuForecast.iconPhaseToWeatherBoost(iconPhase) should be(weatherBoost)
+    }
+  }
 //
 //  it should "throw an Exception if an invalid weather is passed" in {
 //    an[RuntimeException] should be thrownBy AccuForecast.iconPhaseToWeatherBoost("WrongWeather")

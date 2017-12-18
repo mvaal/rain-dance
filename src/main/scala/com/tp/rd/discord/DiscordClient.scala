@@ -6,8 +6,9 @@ import sx.blah.discord.api.{ClientBuilder, IDiscordClient}
 import scala.util.{Failure, Success, Try}
 
 object DiscordClient {
-  def apply(props: DiscordProps): IDiscordClient = {
-    val builder = new ClientBuilder().withToken(props.token)
+  def apply(props: DiscordProps)
+           (clientBuilder: ClientBuilder = new ClientBuilder()): IDiscordClient = {
+    val builder = clientBuilder.withToken(props.token)
     Try {
       builder.login()
     } match {
