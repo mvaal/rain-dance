@@ -1,2 +1,6 @@
-*.class
-*.log
+# Config Files
+**/main/resources/accuweather.conf
+**/main/resources/application.conf
+
+# Intellij
+.idea
