@@ -1,7 +1,7 @@
 package com.tp.rd.weather.accuweather.model
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
-import com.tp.rd.weather.accuweather.model.AccuForecast.dateTimeFormatter
+import com.tp.rd.weather.accuweather.model.AccuForecast.{dateTimeFormatter, iconPhaseToWeatherBoost}
 import com.tp.rd.weather.model.WeatherBoostValue.WeatherBoostValue
 import com.tp.rd.weather.model.{WeatherBoost, WeatherBoostValue}
 import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
@@ -23,21 +23,7 @@ case class AccuForecast(@JsonProperty("DateTime") dateTimeStr: String,
   val epochDateTime: DateTime = new DateTime(epochDateTimeSeconds * 1000)
 
   @JsonIgnore
-  override val weatherBoost: WeatherBoostValue = iconPhase match {
-    case "Cloudy" => WeatherBoostValue.Cloudy
-    case "Showers" => WeatherBoostValue.Rain
-    case "Mostly cloudy" =>
-      println("Mostly cloudy")
-      WeatherBoostValue.Cloudy
-    case "Intermittent clouds" =>
-      println("Intermittent clouds")
-      WeatherBoostValue.`Partly Cloudy`
-    case "Partly sunny" =>
-      println("Partly sunny")
-      WeatherBoostValue.Clear
-    case "Fog" => WeatherBoostValue.Fog
-    case _ => throw new RuntimeException(s"Unknown iconPhase: $iconPhase")
-  }
+  override val weatherBoost: WeatherBoostValue = iconPhaseToWeatherBoost(iconPhase)
 
   @JsonIgnore
   override val time: DateTime = dateTime
@@ -45,4 +31,22 @@ case class AccuForecast(@JsonProperty("DateTime") dateTimeStr: String,
 
 object AccuForecast {
   val dateTimeFormatter: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.getDefault)
+
+  def iconPhaseToWeatherBoost(iconPhase: String): WeatherBoostValue = {
+    iconPhase match {
+      case "Cloudy" => WeatherBoostValue.Cloudy
+      case "Showers" => WeatherBoostValue.Rain
+      case "Mostly cloudy" =>
+        println("Mostly cloudy")
+        WeatherBoostValue.Cloudy
+      case "Intermittent clouds" =>
+        println("Intermittent clouds")
+        WeatherBoostValue.`Partly Cloudy`
+      case "Partly sunny" =>
+        println("Partly sunny")
+        WeatherBoostValue.Clear
+      case "Fog" => WeatherBoostValue.Fog
+      case _ => throw new RuntimeException(s"Unknown iconPhase: $iconPhase")
+    }
+  }
 }
