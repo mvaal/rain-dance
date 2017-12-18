@@ -36,15 +36,9 @@ object AccuForecast {
     iconPhase match {
       case "Cloudy" => WeatherBoostValue.Cloudy
       case "Showers" => WeatherBoostValue.Rain
-      case "Mostly cloudy" =>
-        println("Mostly cloudy")
-        WeatherBoostValue.Cloudy
-      case "Intermittent clouds" =>
-        println("Intermittent clouds")
-        WeatherBoostValue.`Partly Cloudy`
-      case "Partly sunny" =>
-        println("Partly sunny")
-        WeatherBoostValue.Clear
+      case "Mostly cloudy" => WeatherBoostValue.Cloudy
+      case "Intermittent clouds" => WeatherBoostValue.`Partly Cloudy`
+      case "Partly sunny" => WeatherBoostValue.Clear
       case "Fog" => WeatherBoostValue.Fog
       case _ => throw new RuntimeException(s"Unknown iconPhase: $iconPhase")
     }
