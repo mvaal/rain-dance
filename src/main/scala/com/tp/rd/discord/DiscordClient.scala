@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 
 object DiscordClient {
   def apply(props: DiscordProps)
-           (clientBuilder: ClientBuilder = new ClientBuilder()): IDiscordClient = {
+           (implicit clientBuilder: ClientBuilder = new ClientBuilder()): IDiscordClient = {
     val builder = clientBuilder.withToken(props.token)
     Try {
       builder.login()
