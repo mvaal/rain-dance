@@ -1,20 +1,7 @@
 language: scala
 scala:
-  - 2.10.7
-  - 2.11.11
   - 2.12.4
-jdk:
-  - oraclejdk7
-  - openjdk7
-addons:
-  hostname: localhost
-matrix:
-  include:
-  - scala: 2.12.1
-    jdk: oraclejdk8
-  - scala: 2.13.0-M1
-    jdk: oraclejdk8
-#script:
-#  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-#after_success:
-#  - bash <(curl -s https://codecov.io/bash)
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
