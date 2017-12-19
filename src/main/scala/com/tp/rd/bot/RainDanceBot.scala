@@ -8,7 +8,6 @@ import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 import sx.blah.discord.util.MessageBuilder
 
-//w!everyday set 12:30
 class RainDanceBot(val discordClient: IDiscordClient, weatherClient: WeatherClient)
   extends BaseBot
     with DiscordListener
@@ -42,6 +41,8 @@ class RainDanceBot(val discordClient: IDiscordClient, weatherClient: WeatherClie
         .build()
     }
   }
+
+  def start(): Unit = weatherClientTask.start()
 
   override def close(): Unit = weatherClientTask.close()
 }

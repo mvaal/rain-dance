@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 import org.specs2.mock.Mockito
+import resource.managed
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventDispatcher
 import sx.blah.discord.api.internal.json.objects.EmbedObject
@@ -33,8 +34,8 @@ class AccuWeatherRainDanceBotSpec
 
     val messageReceived = messageEvent(expectedContent, discordClient, channel)
     val messageReceivedEvent = new MessageReceivedEvent(messageReceived)
-    val rainDanceBot = AccuWeatherRainDanceBot(discordClient)(ConfigFactory.load())
-    rainDanceBot.handleEvent(messageReceivedEvent)
+    managed(AccuWeatherRainDanceBot(discordClient)(ConfigFactory.load()))
+      .acquireAndGet(rainDanceBot => rainDanceBot.handleEvent(messageReceivedEvent))
 
     there was one(channel).sendMessage(anyString, any[EmbedObject](), anyBoolean)
   }

@@ -19,11 +19,9 @@ class WeatherClientTask(discordClient: IDiscordClient,
                         weatherRequestMinute: Int = 45,
                         messagePeriod: FiniteDuration = 1.hour) extends TimerTask with Closeable {
   private val activeChannelMap = new ConcurrentHashMap[IChannel, Location]()
-  private val timer: Timer = {
-    val timer = new Timer()
-    timer.schedule(this, firstTime.getTime, messagePeriod.toMillis)
-    timer
-  }
+  private val timer: Timer = new Timer()
+
+  def start(): Unit = timer.schedule(this, firstTime.getTime, messagePeriod.toMillis)
 
   override def run(): Unit = {
     val activeChannels = activeChannelMap.asScala.groupBy(_._2).mapValues(_.keys)

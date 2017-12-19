@@ -35,7 +35,7 @@ In main/resources add **accuweather.conf**
 ### Running
 From IDE, run: 
 
-    AccuWeatherRainDanceBot
+    AccuWeatherRainDanceBotRunner
     
 ## Known Issues/Missing Features
 * App/Docker support to run outside IDE
