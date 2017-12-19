@@ -10,6 +10,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
+import scala.util.{Failure, Success, Try}
 import scalaj.http.Http
 
 class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuweather.conf")) extends WeatherClient {
@@ -17,12 +18,17 @@ class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuwea
 
   override def hourly(hours: Int, locationKey: String): Seq[AccuForecast] = {
     assert(hours == 1 || hours == 12, "Supported hours are 1 and 12.")
-    val forecastResponse = httpRequest(hourlyUrl(hours, locationKey))
+    val request = httpRequest(hourlyUrl(hours, locationKey))
       .param(ApikeyQueryParam, props.apikey)
-      .execute(parser = { inputStream =>
+    val forecast = Try {
+      request.execute(parser = { inputStream =>
         objectMapper.readValue(inputStream, classOf[Array[AccuForecast]])
       })
-    forecastResponse.body
+    } match {
+      case Success(httpResponse) => httpResponse.body
+      case Failure(_) => objectMapper.readValue(request.asString.body, classOf[Array[AccuForecast]])
+    }
+    forecast
   }
 
   def location(lat: Double, lon: Double): AccuLocation = {

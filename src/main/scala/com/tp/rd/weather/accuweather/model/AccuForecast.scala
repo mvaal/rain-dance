@@ -36,6 +36,7 @@ object AccuForecast {
     iconPhase match {
       case "Cloudy" => WeatherBoostValue.Cloudy
       case "Showers" => WeatherBoostValue.Rain
+      case "Rain" => WeatherBoostValue.Rain
       case "Mostly cloudy" => WeatherBoostValue.Cloudy
       case "Intermittent clouds" => WeatherBoostValue.`Partly Cloudy`
       case "Partly sunny" => WeatherBoostValue.Clear
