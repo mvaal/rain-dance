@@ -4,11 +4,11 @@ jdk: oraclejdk8
 
 scala:
    - 2.11.11
-#  - 2.12.4
+   - 2.12.4
 
 script:
-  - sbt --debug clean coverage test
-  - sbt --debug coverageReport
+  - sbt clean coverage test
+  - sbt coverageReport
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
