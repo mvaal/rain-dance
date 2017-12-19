@@ -19,3 +19,4 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-mock" % "4.0.2" % Test
 )
 
+coverageExcludedPackages := "*\\sample\\*"

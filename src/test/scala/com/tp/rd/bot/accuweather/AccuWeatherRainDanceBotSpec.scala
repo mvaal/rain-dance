@@ -20,7 +20,7 @@ class AccuWeatherRainDanceBotSpec
     with Mockito {
   behavior of "apply"
 
-  it should "" in {
+  it should "properly handle a Discord event" in {
     val expectedContent = "ExpectedContent"
 
     val discordClient = mock[IDiscordClient]

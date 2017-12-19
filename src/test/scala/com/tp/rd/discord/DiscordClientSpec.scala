@@ -17,4 +17,14 @@ class DiscordClientSpec extends FlatSpec with Matchers with Mockito {
     clientBuilder.login().returns(discordClient)
     DiscordClient(props)(clientBuilder) should be(discordClient)
   }
+
+  it should "throw an exception if login throws an exception" in {
+    val exceptionMsg = "ExceptionMsg"
+    val expectedToken = "ExpectedToken"
+    val props = DiscordProps(expectedToken)
+    val clientBuilder = mock[ClientBuilder]
+    clientBuilder.withToken(expectedToken).returns(clientBuilder)
+    clientBuilder.login().throws(new RuntimeException(exceptionMsg))
+    the[RuntimeException] thrownBy DiscordClient(props)(clientBuilder) should have message exceptionMsg
+  }
 }
