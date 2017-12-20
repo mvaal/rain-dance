@@ -8,7 +8,7 @@ import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
 import scala.util.{Failure, Success, Try}
-import scalaj.http.Http
+import scalaj.http.{Http, HttpRequest}
 
 class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuweather.conf")) extends WeatherClient {
   private val props = config.as[AccuWeatherProps]("accuweather")
@@ -33,7 +33,7 @@ class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuwea
     forecastResponse.body
   }
 
-  protected def httpRequest(url: String) = Http(url)
+  protected def httpRequest(url: String): HttpRequest = Http(url)
 }
 
 object AccuWeatherClient {
