@@ -1,7 +1,9 @@
 package com.tp.rd.bot.accuweather.model
 
+import java.io.ByteArrayInputStream
+
 import com.tp.rd.weather.accuweather.model.AccuForecast.dateTimeFormatter
-import com.tp.rd.weather.accuweather.model.{AccuForecast, AccuTemperature}
+import com.tp.rd.weather.accuweather.model.{AccuForecast, AccuTemperature, ObjectMapper}
 import com.tp.rd.weather.model.WeatherBoostValue
 import com.tp.rd.weather.model.WeatherBoostValue.WeatherBoostValue
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -47,5 +49,44 @@ class AccuForecastSpec extends FlatSpec with Matchers {
     )
     accuForecast.weatherBoost should be(AccuForecast.iconPhaseToWeatherBoost(accuForecast.iconPhase))
     accuForecast.time should be(dateTimeFormatter.parseDateTime(accuForecast.dateTimeStr))
+  }
+
+  behavior of "parseAccuForecasts"
+
+  it should "parse properly from InputStream" in {
+    val accuTemperature = AccuTemperature(36, "F", 18)
+    val accuForecast = AccuForecast(
+      "2017-12-16T01:00:00-06:00",
+      1513407600,
+      7,
+      "Cloudy",
+      isDaylight = false,
+      accuTemperature,
+      0,
+      "http://url",
+      "http://url"
+    )
+    val expectedResponse = Array(accuForecast)
+    val byteArray = ObjectMapper.writeValueAsBytes(expectedResponse)
+    val inputStream = new ByteArrayInputStream(byteArray)
+    AccuForecast.parseAccuForecasts(inputStream) should be(expectedResponse)
+  }
+
+  it should "parse properly from String" in {
+    val accuTemperature = AccuTemperature(36, "F", 18)
+    val accuForecast = AccuForecast(
+      "2017-12-16T01:00:00-06:00",
+      1513407600,
+      7,
+      "Cloudy",
+      isDaylight = false,
+      accuTemperature,
+      0,
+      "http://url",
+      "http://url"
+    )
+    val expectedResponse = Array(accuForecast)
+    val jsonString = ObjectMapper.writeValueAsString(expectedResponse)
+    AccuForecast.parseAccuForecasts(jsonString) should be(expectedResponse)
   }
 }
