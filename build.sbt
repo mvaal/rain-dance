@@ -4,6 +4,7 @@ version := "0.1"
 
 scalaVersion := "2.12.4"
 crossScalaVersions := Seq("2.12.4")
+parallelExecution in Test := false
 
 resolvers += "jcenter" at "http://jcenter.bintray.com"
 resolvers += "jitpack.io" at "https://jitpack.io"

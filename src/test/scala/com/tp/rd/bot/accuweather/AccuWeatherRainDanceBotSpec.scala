@@ -19,26 +19,26 @@ class AccuWeatherRainDanceBotSpec
   extends FlatSpec
     with Matchers
     with Mockito {
-  //  behavior of "apply"
-  //
-  //  it should "properly handle a Discord event" in {
-  //    val expectedContent = "ExpectedContent"
-  //
-  //    val discordClient = mock[IDiscordClient]
-  //    val dispatcher = mock[EventDispatcher]
-  //    discordClient.getDispatcher.returns(dispatcher)
-  //    doNothing.when(dispatcher).registerListener(discordClient)
-  //
-  //    val channel = mock[Channel]
-  //    channel.sendMessage(expectedContent, null, false).returns(null)
-  //
-  //    val messageReceived = messageEvent(expectedContent, discordClient, channel)
-  //    val messageReceivedEvent = new MessageReceivedEvent(messageReceived)
-  //    managed(AccuWeatherRainDanceBot(discordClient)(ConfigFactory.load()))
-  //      .acquireAndGet(rainDanceBot => rainDanceBot.handleEvent(messageReceivedEvent))
-  //
-  //    there was one(channel).sendMessage(anyString, any[EmbedObject](), anyBoolean)
-  //  }
+  behavior of "apply"
+
+  it should "properly handle a Discord event" in {
+    val expectedContent = "ExpectedContent"
+
+    val discordClient = mock[IDiscordClient]
+    val dispatcher = mock[EventDispatcher]
+    discordClient.getDispatcher.returns(dispatcher)
+    doNothing.when(dispatcher).registerListener(discordClient)
+
+    val channel = mock[Channel]
+    channel.sendMessage(expectedContent, null, false).returns(null)
+
+    val messageReceived = messageEvent(expectedContent, discordClient, channel)
+    val messageReceivedEvent = new MessageReceivedEvent(messageReceived)
+    managed(AccuWeatherRainDanceBot(discordClient)(ConfigFactory.load()))
+      .acquireAndGet(rainDanceBot => rainDanceBot.handleEvent(messageReceivedEvent))
+
+    there was one(channel).sendMessage(anyString, any[EmbedObject](), anyBoolean)
+  }
 
   private def messageEvent(content: String,
                            discordClient: IDiscordClient,
