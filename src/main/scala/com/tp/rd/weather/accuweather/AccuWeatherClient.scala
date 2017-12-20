@@ -1,8 +1,5 @@
 package com.tp.rd.weather.accuweather
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.tp.rd.weather.WeatherClient
 import com.tp.rd.weather.accuweather.AccuWeatherClient._
 import com.tp.rd.weather.accuweather.model.{AccuForecast, AccuLocation, AccuWeatherProps}
@@ -21,12 +18,10 @@ class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuwea
     val request = httpRequest(hourlyUrl(hours, locationKey))
       .param(ApikeyQueryParam, props.apikey)
     val forecast = Try {
-      request.execute(parser = { inputStream =>
-        objectMapper.readValue(inputStream, classOf[Array[AccuForecast]])
-      })
+      request.execute(parser = AccuForecast.parseAccuForecasts)
     } match {
       case Success(httpResponse) => httpResponse.body
-      case Failure(_) => objectMapper.readValue(request.asString.body, classOf[Array[AccuForecast]])
+      case Failure(_) => AccuForecast.parseAccuForecasts(request.asString.body)
     }
     forecast
   }
@@ -34,9 +29,7 @@ class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuwea
   def location(lat: Double, lon: Double): AccuLocation = {
     val forecastResponse = httpRequest(locationUrl)
       .params((ApikeyQueryParam, props.apikey), ("q", s"$lat,$lon"))
-      .execute(parser = { inputStream =>
-        objectMapper.readValue(inputStream, classOf[AccuLocation])
-      })
+      .execute(parser = AccuLocation.parseAccuLocation)
     forecastResponse.body
   }
 
@@ -44,9 +37,6 @@ class AccuWeatherClient(private val config: Config = ConfigFactory.load("accuwea
 }
 
 object AccuWeatherClient {
-  val objectMapper: ObjectMapper = (new ObjectMapper() with ScalaObjectMapper)
-    .registerModule(DefaultScalaModule)
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   val Host: String = "http://dataservice.accuweather.com"
   val ApikeyQueryParam = "apikey"
 

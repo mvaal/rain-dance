@@ -15,6 +15,7 @@ class AccuForecastSpec extends FlatSpec with Matchers {
       ("iconPhase", "weatherBoost"),
       ("Cloudy", WeatherBoostValue.Cloudy),
       ("Showers", WeatherBoostValue.Rain),
+      ("Rain", WeatherBoostValue.Rain),
       ("Mostly cloudy", WeatherBoostValue.Cloudy),
       ("Intermittent clouds", WeatherBoostValue.`Partly Cloudy`),
       ("Partly sunny", WeatherBoostValue.Clear),

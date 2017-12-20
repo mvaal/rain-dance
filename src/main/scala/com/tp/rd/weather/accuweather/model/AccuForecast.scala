@@ -1,5 +1,7 @@
 package com.tp.rd.weather.accuweather.model
 
+import java.io.InputStream
+
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import com.tp.rd.weather.accuweather.model.AccuForecast.{dateTimeFormatter, iconPhaseToWeatherBoost}
 import com.tp.rd.weather.model.WeatherBoostValue.WeatherBoostValue
@@ -43,5 +45,13 @@ object AccuForecast {
       case "Fog" => WeatherBoostValue.Fog
       case _ => throw new RuntimeException(s"Unknown iconPhase: $iconPhase")
     }
+  }
+
+  def parseAccuForecasts(inputStream: InputStream): Array[AccuForecast] = {
+    ObjectMapper.readValue(inputStream, classOf[Array[AccuForecast]])
+  }
+
+  def parseAccuForecasts(input: String): Array[AccuForecast] = {
+    ObjectMapper.readValue(input, classOf[Array[AccuForecast]])
   }
 }
