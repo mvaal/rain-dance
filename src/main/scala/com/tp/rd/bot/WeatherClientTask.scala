@@ -1,6 +1,5 @@
 package com.tp.rd.bot
 
-import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 import java.util.{Calendar, Timer, TimerTask}
 
@@ -18,7 +17,7 @@ import scala.concurrent.duration._
 class WeatherClientTask(discordClient: IDiscordClient,
                         weatherClient: WeatherClient,
                         weatherRequestMinute: Int = 45,
-                        messagePeriod: FiniteDuration = 1.hour) extends TimerTask with Closeable {
+                        messagePeriod: FiniteDuration = 1.hour) extends TimerTask {
   private val activeChannelMap = new ConcurrentHashMap[IChannel, Location]()
   private val timer: Timer = new Timer()
 
@@ -26,9 +25,7 @@ class WeatherClientTask(discordClient: IDiscordClient,
 
   override def run(): Unit = {
     val activeChannels = activeChannelMap.asScala.groupBy(_._2).mapValues(_.keys)
-    if (activeChannels.nonEmpty) {
-      messageDiscordChannels(activeChannels)
-    }
+    messageDiscordChannels(activeChannels)
   }
 
   def messageDiscordChannels(activeChannels: Map[Location, Iterable[IChannel]]): Unit = {
@@ -42,7 +39,7 @@ class WeatherClientTask(discordClient: IDiscordClient,
     }
   }
 
-  private def broadcastForecast(weatherBoost: WeatherBoost, channel: IChannel): IMessage = {
+  protected def broadcastForecast(weatherBoost: WeatherBoost, channel: IChannel): IMessage = {
     val forecast: String = forecastText(weatherBoost)
     new MessageBuilder(discordClient)
       .withChannel(channel)
@@ -60,7 +57,10 @@ class WeatherClientTask(discordClient: IDiscordClient,
     cal
   }
 
-  override def close(): Unit = timer.cancel()
+  override def cancel(): Boolean = {
+    timer.cancel()
+    super.cancel()
+  }
 }
 
 object WeatherClientTask {

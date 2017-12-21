@@ -44,7 +44,7 @@ class RainDanceBot(val discordClient: IDiscordClient, weatherClient: WeatherClie
 
   def start(): Unit = weatherClientTask.start()
 
-  override def close(): Unit = weatherClientTask.close()
+  override def close(): Unit = weatherClientTask.cancel()
 }
 
 object RainDanceBot {

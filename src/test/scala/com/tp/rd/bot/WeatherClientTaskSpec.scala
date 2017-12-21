@@ -18,18 +18,18 @@ class WeatherClientTaskSpec extends FlatSpec with Matchers with Mockito with Pri
 
   case class MockWeatherBoost(weatherBoost: WeatherBoostValue, time: DateTime) extends WeatherBoost
 
-  behavior of "run"
-  it should "not call messageDiscordChannels if there are no active channels" in {
+  behavior of "start"
+  it should "schedule the task" in {
     val discordClient = mock[IDiscordClient]
     val weatherClient = mock[WeatherClient]
-    val weatherClientTask = new WeatherClientTask(discordClient, weatherClient) {
-      override def messageDiscordChannels(activeChannels: Map[Location, Iterable[IChannel]]): Unit = {
-        fail("Should not reach here.")
-      }
-    }
-    weatherClientTask.run()
+    val weatherClientTask = new WeatherClientTask(discordClient, weatherClient)
+    weatherClientTask.scheduledExecutionTime() should be(0)
+    weatherClientTask.start()
+    weatherClientTask.scheduledExecutionTime() should not be 0
+    weatherClientTask.cancel()
   }
 
+  behavior of "run"
   it should "call messageDiscordChannels on active channels" in {
     val channel = mock[IChannel]
     val location = AccuLocation("LocationKey")
@@ -44,6 +44,39 @@ class WeatherClientTaskSpec extends FlatSpec with Matchers with Mockito with Pri
     }
     weatherClientTask.startLocation(channel, location)
     weatherClientTask.run()
+  }
+
+  behavior of "messageDiscordChannels"
+  it should "not send any messages if there are no active channels" in {
+    val discordClient = mock[IDiscordClient]
+    val weatherClient = mock[WeatherClient]
+    val weatherClientTask = new WeatherClientTask(discordClient, weatherClient) {
+      override protected def broadcastForecast(weatherBoost: WeatherBoost, channel: IChannel): IMessage = {
+        fail("No broadcasts should be sent")
+        mock[IMessage]
+      }
+    }
+    weatherClientTask.messageDiscordChannels(Map())
+  }
+
+  it should "send a message if the active channels is not empty" in {
+    val location = AccuLocation("LocationKey")
+    val expectedChannel = mock[IChannel]
+    val discordClient = mock[IDiscordClient]
+    val weatherClient = mock[WeatherClient]
+    val expectedWeatherBoost = MockWeatherBoost(WeatherBoostValue.Rain, new DateTime())
+    weatherClient.hourly(1, location.locationKey).returns(Array(expectedWeatherBoost))
+    val weatherClientTask = new WeatherClientTask(discordClient, weatherClient) {
+      override protected def broadcastForecast(weatherBoost: WeatherBoost, channel: IChannel): IMessage = {
+        weatherBoost should be(expectedWeatherBoost)
+        channel should be(expectedChannel)
+        mock[IMessage]
+      }
+    }
+    val activeChannels = Map[Location, Iterable[IChannel]](
+      location -> Seq(expectedChannel)
+    )
+    weatherClientTask.messageDiscordChannels(activeChannels)
   }
 
   behavior of "broadcastForecast"
