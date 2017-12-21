@@ -4,11 +4,12 @@ import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 import java.util.{Calendar, Timer, TimerTask}
 
+import com.tp.rd.bot.WeatherClientTask.forecastText
 import com.tp.rd.weather.WeatherClient
-import com.tp.rd.weather.model.Location
-import org.joda.time.format.DateTimeFormat
+import com.tp.rd.weather.model.{Location, WeatherBoost}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import sx.blah.discord.api.IDiscordClient
-import sx.blah.discord.handle.obj.IChannel
+import sx.blah.discord.handle.obj.{IChannel, IMessage}
 import sx.blah.discord.util.MessageBuilder
 
 import scala.collection.JavaConverters._
@@ -33,17 +34,20 @@ class WeatherClientTask(discordClient: IDiscordClient,
   def messageDiscordChannels(activeChannels: Map[Location, Iterable[IChannel]]): Unit = {
     activeChannels.foreach { case (location, channels) =>
       val contentOpt = weatherClient.hourly(1, location.locationKey).headOption
-      contentOpt.foreach { content =>
+      contentOpt.foreach { weatherBoost =>
         channels.foreach { channel =>
-          val formatter = DateTimeFormat.forPattern("HH:mm")
-          val forecast = s"Forecast for ${formatter.print(content.time)} is ${content.weatherBoost}."
-          new MessageBuilder(discordClient)
-            .withChannel(channel)
-            .withContent(forecast)
-            .build()
+          broadcastForecast(weatherBoost, channel)
         }
       }
     }
+  }
+
+  private def broadcastForecast(weatherBoost: WeatherBoost, channel: IChannel): IMessage = {
+    val forecast: String = forecastText(weatherBoost)
+    new MessageBuilder(discordClient)
+      .withChannel(channel)
+      .withContent(forecast)
+      .build()
   }
 
   def startLocation(channel: IChannel, location: Location): Location = activeChannelMap.put(channel, location)
@@ -57,4 +61,12 @@ class WeatherClientTask(discordClient: IDiscordClient,
   }
 
   override def close(): Unit = timer.cancel()
+}
+
+object WeatherClientTask {
+  val ContentDateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
+
+  def forecastText(weatherBoost: WeatherBoost): String = {
+    s"Forecast for ${ContentDateTimeFormatter.print(weatherBoost.time)} is ${weatherBoost.weatherBoost}."
+  }
 }
