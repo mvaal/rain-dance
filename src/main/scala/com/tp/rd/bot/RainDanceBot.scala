@@ -31,7 +31,7 @@ class RainDanceBot(val discordClient: IDiscordClient, weatherClient: WeatherClie
           val location = weatherClientTask.stopOnServer(channel)
           s"I have stopped detecting weather changes for ${location.locationKey}."
         case Array(COMMANDS_COMMAND) =>
-          COMMANDS.map(command => s"$COMMAND_SEPARATOR$command").mkString("\n")
+          COMMANDS.map { case (cmd, params) => s"$COMMAND_SEPARATOR$cmd $params" }.mkString("\n")
         case _ =>
           s"Not a valid command, $author. For help, type ${COMMAND_START}commands."
       }
@@ -54,9 +54,9 @@ object RainDanceBot {
   val START_COMMAND: String = "start"
   val STOP_COMMAND: String = "stop"
 
-  val COMMANDS = List(
-    START_COMMAND,
-    STOP_COMMAND,
-    COMMANDS_COMMAND
+  val COMMANDS = Map(
+    START_COMMAND -> "<latitude>,<longitude>",
+    STOP_COMMAND -> "",
+    COMMANDS_COMMAND -> ""
   )
 }

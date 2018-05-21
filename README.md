@@ -3,6 +3,15 @@ RainDance is a Discord bot that forecasts the weather for the next hour at a set
 
 This was primarily written to keep track of PoGo weather changes, but may have other uses.
 
+## Commands
+
+* rd!start latitude,longitude
+  * latitude and longitude of the location you wish to track
+* rd!stop
+  * stop bot from running
+* rd!commands
+  * display available commands
+
 ## Setup
 ### Discord
 ##### Create bot
